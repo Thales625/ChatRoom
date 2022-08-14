@@ -70,7 +70,6 @@
         }
         
         div.users {
-            display: flex;
             border: 2px solid gray;
             min-width: 200px;
             height: 300px;
@@ -80,13 +79,13 @@
         }
 
         div.users p {
-            background-color: rgba(0, 0, 0, 0.1);
+            background-color: rgba(55, 55, 85, 0.2);
             padding: 5px;
-            margin: 0px;
+            margin: 0;
         }
 
         div.users p.me {
-            background-color: rgba(255, 0, 0, 0.1);
+            background-color: rgba(70, 190, 255, 0.2);
         }
 
         hr {
@@ -102,7 +101,10 @@
 <body>
     <div class="sidebar">
         <h1>Usuários</h1>
-        <div class="users"></div>
+        <div class="users">
+            <p class="me">Thales</p>
+            <p>Thales</p>
+        </div>
     </div>
     <hr>
     <form id="chat">
