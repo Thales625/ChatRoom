@@ -1,2 +1,2 @@
 # ChatRoom
-a localhost ChatRoom using WebSocket
+A localhost ChatRoom using WebSocket
