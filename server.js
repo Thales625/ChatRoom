@@ -1,48 +1,64 @@
-const express = require('express')
-const path = require('path')
+const express = require("express");
+const app = express();
+const server = require("http").Server(app);
+const io = require("socket.io")(server);
 
-const app = express()
-const server = require('http').createServer(app)
-const sockets = require('socket.io')(server)
+app.use(express.static("public"));
 
-app.set(express.static(path.join(__dirname, 'public')))
-app.set('views', path.join(__dirname, 'public'))
-app.engine('html', require('ejs').renderFile)
-app.set('view engine', 'html')
+const port = 8765;
 
-console.log('Server Online!')
+const users = []
+const chat = []
 
-app.use('/', (req, res) => {
-    res.render('index.html')
-})
+function getUserById(id) {
+    for(const user of users) {
+        if (user.id == id) return user;
+    }
+}
 
-var users = []
-var messages = []
+io.on("connection", socket => {
+    socket.emit("setup", JSON.stringify({
+        users: users,
+        chat: chat
+    }));
 
-sockets.on('connection', socket => {
-    console.log(`Connected to ${socket.id}`)
-    socket.emit('updateMessages', messages)
+    socket.once("setname", name => {
+        users.push({ // PUSH USER
+            id: socket.id,
+            name: name,
+            color: `#${Math.floor(Math.random()*16777215).toString(16)}`
+        });
+    });
 
-    sockets.emit('updateUsers', users)
+    socket.on("message", msg => { // ON RECEIVE MESSAGE
+        if (msg.trim() == "") return;
 
-    socket.once('setup', username => {
-        users.push({
-            name: username,
-            id: socket.id
-        })
-        sockets.emit('updateUsers', users)
-    })
+        const message = {
+            author: getUserById(socket.id),
+            text: msg
+        };
 
-    socket.on('sendMessage', data => {
-        messages.push(data)
-        sockets.emit('updateMessages', messages)
-    })
+        chat.push(message);
 
-    socket.on('disconnect', reason => {
-        console.log(`${socket.id} has been disconnected, Reason: ${reason}`)
-        users = users.filter(e => e.id !== socket.id) // REMOVE THE DISCONNECTED USER
-        sockets.emit('updateUsers', users) // UPDATE THE CLIENTS
-    })
-})
+        io.emit("message", JSON.stringify(message));
 
-server.listen(3000)
+        console.log("Message: ", msg, "from:", socket.id);
+    });
+
+    socket.on("disconnect", reason => {
+        for (let i=0; i<users.length; i++) { // REMOVE USER
+            if (users[i].id === socket.id) {
+                users.splice(i, 1);
+                break;
+            }
+        }
+
+        console.log("> User disconnected");
+    });
+
+    console.log("> User connected");
+});
+
+server.listen(port, () => {
+    console.log("> Server running:", port);
+});
