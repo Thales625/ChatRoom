@@ -10,6 +10,22 @@ const port = 8765;
 const users = []
 const chat = []
 
+function getTime() {
+    const now = new Date();
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+
+    hours = hours < 10 ? `0${hours}` : hours;
+    minutes = minutes < 10 ? `0${minutes}` : minutes;
+
+    const period = hours >= 12 ? "PM" : "AM";
+
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+
+    return `${hours}:${minutes} ${period}`;
+}
+
 function getUserById(id) {
     for(const user of users) {
         if (user.id == id) return user;
@@ -35,7 +51,8 @@ io.on("connection", socket => {
 
         const message = {
             author: getUserById(socket.id),
-            text: msg
+            text: msg,
+            time: getTime()
         };
 
         chat.push(message);

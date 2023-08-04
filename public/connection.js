@@ -1,13 +1,13 @@
+var name = "unknown";
+do {
+    name = prompt("Digite seu nome").trim();
+} while (name == "" || name.length > 15);
+
 const socket = io();
 
-var users = []
+var users = [];
 
 socket.once("setup", content => {
-    var name = "unknown";
-    do {
-        name = prompt("Digite seu nome");
-    } while (name.trim() == "");
-
     socket.emit("setname", name);
 
     const data = JSON.parse(content);

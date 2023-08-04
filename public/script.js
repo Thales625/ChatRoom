@@ -33,7 +33,7 @@ function addMessage(message) {
     const msgDiv = document.createElement("div");
     msgDiv.className = "message";
 
-    msgDiv.innerHTML += `<strong style="color: ${message.author.color}">${message.author.name}:</strong> ${message.text}`;
+    msgDiv.innerHTML = `<strong style="color: ${message.author.color}">${message.author.name}:</strong> ${message.text} | ${message.time}`;
     
     msgDiv.style.backgroundColor = message.author.id == socket.id ? "#005c4b" : "#202c33";
 
