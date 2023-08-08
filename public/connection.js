@@ -1,15 +1,8 @@
-var name = "unknown";
-do {
-    name = prompt("Digite seu nome").trim();
-} while (name == "" || name.length > 15);
-
 const socket = io();
 
 var users = [];
 
 socket.once("setup", content => {
-    socket.emit("setname", name);
-
     const data = JSON.parse(content);
  
     users = data.users;
@@ -22,7 +15,14 @@ socket.on("connect", () => {
     setTimeout(() => {
         connDiv.hidden = true;
         mainDiv.hidden = false;
-    }, 1000);
+    }, 500);
+
+    var name = "unknown";
+    do {
+        name = prompt("Digite seu nome").trim();
+    } while (name == "" || name.length > 15);
+
+    socket.emit("setname", name);
 
     buttonInput.onclick = sendMessage;
     textInput.onkeydown = e => { if (e.key == "Enter") sendMessage(); }

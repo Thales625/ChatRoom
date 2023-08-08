@@ -33,17 +33,17 @@ function getUserById(id) {
 }
 
 io.on("connection", socket => {
-    socket.emit("setup", JSON.stringify({
-        users: users,
-        chat: chat
-    }));
-
     socket.once("setname", name => {
         users.push({ // PUSH USER
             id: socket.id,
             name: name,
             color: `#${Math.floor(Math.random()*16777215).toString(16)}`
         });
+
+        socket.emit("setup", JSON.stringify({
+            users: users,
+            chat: chat
+        }));
     });
 
     socket.on("message", msg => { // ON RECEIVE MESSAGE
