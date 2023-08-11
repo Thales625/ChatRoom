@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph</title>
+</head>
+<body>
+
+    <span id="functions"></span>
+    <canvas id="canvas" width="500" height="500"></canvas>
+    
+    <script>
+        const canvas = document.getElementById("canvas")
+        const ctx = canvas.getContext("2d")
+
+        const functionElements = document.getElementById("functions")
+
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        ctx.fillStyle = "white"
+        ctx.strokeStyle = "gray"
+
+        ctx.beginPath()
+        ctx.moveTo(canvas.width/2, 0)
+        ctx.lineTo(canvas.width/2, canvas.height)
+        ctx.stroke()
+        
+        ctx.beginPath()
+        ctx.moveTo(0, canvas.height/2)
+        ctx.lineTo(canvas.width, canvas.height/2)
+        ctx.stroke()
+
+        
+        const functions = []
+        const SCALE = 5
+
+        // functions.push([f = (x) => (Math.sin(x/10) * 20), "red"])
+        functions.push([f = (x) => (Math.cos(x/10)), "orange"])
+        functions.push([f = (x) => ((8*x-4)/(x**2)), "green"])
+        functions.push([f = (x) => ((x)/(x)), "blue"])
+
+        for (let g of functions) {
+            functionElements.innerHTML += `<h2 style="color:${g[1]}"> ${g[0].toString()} </h2>`
+        }
+        
+        for (let i=0; i<canvas.width; i++) {
+            x = i - canvas.width/2
+
+            for (let h of functions) {
+                y = (canvas.height >> 1)- h[0](x)
+                
+                ctx.strokeStyle = h[1]
+                ctx.beginPath()
+                ctx.moveTo(i, (canvas.height >> 1)- h[0](x)*SCALE)
+                ctx.lineTo(i, (canvas.height >> 1)- h[0](x+1)*SCALE)
+                ctx.stroke()
+            }
+        }
+        
+    </script>
+</body>
+</html>

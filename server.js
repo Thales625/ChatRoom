@@ -8,7 +8,7 @@ app.use(express.static("public"));
 const port = 8765;
 
 const users = []
-const chat = []
+const messages = []
 
 function getTime() {
     const now = new Date();
@@ -33,35 +33,36 @@ function getUserById(id) {
 }
 
 io.on("connection", socket => {
-    socket.emit("setup", JSON.stringify({
-        users: users,
-        chat: chat
-    }));
-
     socket.once("setname", name => {
         users.push({ // PUSH USER
             id: socket.id,
             name: name,
             color: `#${Math.floor(Math.random()*16777215).toString(16)}`
         });
+        
+        socket.on("message", msg => { // ON RECEIVE MESSAGE
+            if (msg.trim() == "") return;
+            
+            const message = {
+                author: getUserById(socket.id),
+                text: msg,
+                time: getTime()
+            };
+            
+            messages.push(message);
+            
+            io.emit("message", JSON.stringify(message));
+            
+            console.log("Message:", msg, "from:", socket.id);
+        });
+
+        socket.on("update-messages", () => { socket.emit("update-messages", JSON.stringify(messages)) });
+        socket.on("update-users", () => { socket.emit("update-users", JSON.stringify(users)) });
+
+
+        io.emit("update-users", JSON.stringify(users))
     });
-
-    socket.on("message", msg => { // ON RECEIVE MESSAGE
-        if (msg.trim() == "") return;
-
-        const message = {
-            author: getUserById(socket.id),
-            text: msg,
-            time: getTime()
-        };
-
-        chat.push(message);
-
-        io.emit("message", JSON.stringify(message));
-
-        console.log("Message: ", msg, "from:", socket.id);
-    });
-
+    
     socket.on("disconnect", reason => {
         for (let i=0; i<users.length; i++) { // REMOVE USER
             if (users[i].id === socket.id) {
@@ -70,8 +71,15 @@ io.on("connection", socket => {
             }
         }
 
+        io.emit("update-users", JSON.stringify(users))
+
         console.log("> User disconnected");
     });
+
+    socket.emit("setup", JSON.stringify({
+        users: users,
+        messages: messages
+    }));
 
     console.log("> User connected");
 });
