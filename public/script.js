@@ -62,7 +62,7 @@ function setupChat(messages) {
 }
 
 function clearMessages() {
-    chatContainer.innerHTML = ""
+    chatContainer.innerHTML = "";
 }
 
 function addMessage(message) {
@@ -85,9 +85,9 @@ function addMessage(message) {
     
     // GLOBAL COMMANDS
     if (message.text.startsWith("/html ")) {
-        msgText.innerHTML = message.text.replace("/html ", "")
+        msgText.innerHTML = message.text.replace("/html ", "");
     } else {
-        msgText.innerText = message.text
+        msgText.innerText = message.text;
     }
 
     msgDiv.appendChild(msgAuthor)

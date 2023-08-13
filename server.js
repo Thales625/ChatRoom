@@ -7,8 +7,8 @@ app.use(express.static("public"));
 
 const port = 8765;
 
-const users = []
-const messages = []
+const users = [];
+const messages = [];
 
 function getTime() {
     const now = new Date();
@@ -60,7 +60,7 @@ io.on("connection", socket => {
         socket.on("update-users", () => { socket.emit("update-users", JSON.stringify(users)) });
 
 
-        io.emit("update-users", JSON.stringify(users))
+        io.emit("update-users", JSON.stringify(users));
     });
     
     socket.on("disconnect", reason => {
@@ -71,7 +71,7 @@ io.on("connection", socket => {
             }
         }
 
-        io.emit("update-users", JSON.stringify(users))
+        io.emit("update-users", JSON.stringify(users));
 
         console.log("> User disconnected");
     });
